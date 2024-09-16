@@ -82,6 +82,10 @@ import ConsultationForm from "../components/consultants/consultants-form";
 import ConsultationDetailsPage from "../components/consultants/consultants-details";
 import ConsultationsDetailsPage from "../components/consultations/consultations-details";
 import ConsultationsPage from "../pages/consultations";
+import PoliceseDetailsPage from "../components/policese/policese-details";
+
+import PolicesePage from "../pages/policese";
+import PoliceseForm from "../components/policese/policese-form";
 // import { GiPayMoney, GiSplitArrows, GiTable } from 'react-icons/gi'
 
 // import { FiLogIn, FiLogOut, FiSettings, FiTrash } from 'react-icons/fi'
@@ -403,6 +407,27 @@ export const routes: IRoute[] = [
       {
         path: "details/:id",
         component: <ConsultationsDetailsPage />,
+      },
+    ],
+  },
+  {
+    labelKey: "Policese",
+    icon: <IoIosPeople />,
+    path: "/policese",
+    hasSubMenus: false,
+    component: <PolicesePage />,
+    crudRoutes: [
+      {
+        path: "update/:id",
+        component: <PoliceseForm />,
+      },
+      {
+        path: "create",
+        component: <PoliceseForm />,
+      },
+      {
+        path: "details/:name",
+        component: <PoliceseDetailsPage />,
       },
     ],
   },

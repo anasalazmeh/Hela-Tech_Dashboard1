@@ -1,39 +1,60 @@
-import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import {
-  Image as AntdImage,
-  Input as AntdInput,
   Checkbox,
   CheckboxOptionType,
   Col,
   DatePicker,
+  Form,
+  Input as AntdInput,
   Input,
   InputNumber,
   Radio,
-  Rate,
   Row,
   Select,
   TimePicker,
+  Image as AntdImage,
   UploadFile,
+  Rate,
 } from "antd";
-import { RcFile } from "antd/es/upload";
-import { RegisterOptions, useFormContext } from "react-hook-form";
-import { a2e } from "../../../utils/helpers/functions";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // Import Quill styles
+import {EditorState} from "draft-js"
+import { Editor } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import Controller from "../../form-components/controller";
+import { UserOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
 import Switch from "../../general/antd/switch";
 import styles from "./styles.module.scss";
+import { RcFile } from "antd/es/upload";
+import { RegisterOptions, useForm, useFormContext } from "react-hook-form";
+import { a2e } from "../../../utils/helpers/functions";
 // import moment from 'moment'
+import { isEmpty } from "lodash";
+import dayjs from "dayjs";
+import FormItem from "../../general/form-item";
+import { useEffect, useState } from "react";
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 import { message, Upload } from "antd";
 import AntdImgCrop from "antd-img-crop";
-import dayjs from "dayjs";
-import { isEmpty } from "lodash";
-import { useEffect, useState } from "react";
-import FormItem from "../../general/form-item";
 
 const { RangePicker } = DatePicker;
 const { TextArea, Search } = AntdInput;
+const modules = {
+  toolbar: [
+    [{ 'header': [1, 2, false] }],
+    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    ['link', 'image'],
+    ['clean']  // remove formatting button
+  ],
+};
 
+const formats = [
+  'header',
+  'bold', 'italic', 'underline', 'strike', 'blockquote',
+  'list', 'bullet',
+  'link', 'image'
+];
 interface Rules {
   required?: boolean;
   minLength?: number;
@@ -83,7 +104,8 @@ type Field =
   | { type: "color-picker" }
   | { type: "file"; url?: string }
   | { type: "file-list" }
-  | { type: "rating" };
+  | { type: "rating" }
+  | { type: "simple" };
 
 interface Props {
   name: string;
@@ -96,22 +118,22 @@ interface Props {
 }
 const { Dragger } = Upload;
 
-// const prop: UploadProps = {
-//   accept: "image/png, image/jpeg , image/jpg",
-//   name: "file",
-//   multiple: true,
-//   action: "https://chamaa2.autozonegroup.com/public/api/v1/media",
-//   onChange(info) {
-//     const { status } = info.file;
-//     if (status !== "uploading") {
-//     }
-//     if (status === "done") {
-//       message.success(`${info.file.name} file uploaded successfully.`);
-//     } else if (status === "error") {
-//       message.error(`${info.file.name} file upload failed.`);
-//     }
-//   },
-// };
+const prop: UploadProps = {
+  accept: "image/png, image/jpeg , image/jpg",
+  name: "file",
+  multiple: true,
+  action: "https://chamaa2.autozonegroup.com/public/api/v1/media",
+  onChange(info) {
+    const { status } = info.file;
+    if (status !== "uploading") {
+    }
+    if (status === "done") {
+      message.success(`${info.file.name} file uploaded successfully.`);
+    } else if (status === "error") {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  },
+};
 
 const FieldBuilder: React.FC<Props> = (props) => {
   const { control } = useFormContext();
@@ -204,7 +226,7 @@ const FieldBuilder: React.FC<Props> = (props) => {
   };
   return (
     <FormItem
-      label={props.input.type === "checkBox" ? "" : props.label}
+      label={props.input.type == "checkBox" ? "" : props.label}
       required={props.rules?.required}
     >
       <Controller
@@ -610,6 +632,14 @@ const FieldBuilder: React.FC<Props> = (props) => {
                     {fileList.length < 10 && "+ Upload"}
                   </Upload>
                 </AntdImgCrop>
+              );
+            case "simple":
+              return (
+                <ReactQuill
+                  {...field}
+                  modules={modules}
+                  formats={formats}
+                />
               );
             default:
               return (

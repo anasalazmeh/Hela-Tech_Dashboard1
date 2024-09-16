@@ -128,6 +128,7 @@ const ConsultantsContextProvider: React.FC<IProps> = (props) => {
             name: request.name_ar,
             description: request.description_ar,
             specialization: request.specialization_ar,
+            image:request.image,
             lang: "ar",
             _method: "PUT",
           }),
